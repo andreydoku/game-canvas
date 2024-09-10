@@ -79,6 +79,28 @@ export function degreesString( v:Vector2 ): string {
 	return toDegreesString(a);
 }
 
+export function setLength( v:Vector2 , length:number ): Vector2 {
+	const a:number = angle(v);
+	return fromPolar(length, a);
+}
+
+export function setAngle( v:Vector2 , angle:number ): Vector2 {
+	const len:number = length(v);
+	return fromPolar(len, angle);
+}
+
+export function addAngle( v:Vector2 , deltaAngle:number ): Vector2 {
+	const len:number = length(v);
+	const a:number = angle(v);
+	return fromPolar(len, a + deltaAngle);
+}
+
+export function rotate( v:Vector2 , deltaAngle:number ): Vector2 {
+	return addAngle( v , deltaAngle );
+}
+
+
+
 export function fromPolar( length:number , angle:number ): Vector2{
 	return {
 		x: length * Math.cos( angle ),
@@ -95,6 +117,15 @@ export function midpoint( v1:Vector2 , v2:Vector2 ): Vector2 {
 		y: (v1.y + v2.y)/2,
 	}
 }
+
+
+
+
+
+
+
+
+
 
 export function toDegrees( radians:number ): number {
 	return radians * 180.0 / Math.PI;

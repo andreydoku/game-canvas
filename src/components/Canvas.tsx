@@ -1,16 +1,22 @@
-import { addPolar, fixAngle, toDegreesString, toRadians, TWO_PI, Vector2 } from "./Vector2"
+import { add, addPolar, fixAngle, rotate, toDegreesString, toRadians, TWO_PI, Vector2 } from "./Vector2"
 import "./Canvas.scss";
 import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 
 export type CanvasState = {
 	getPixel: (v:Vector2) => Vector2,
+	getPoint: (v:Vector2) => Vector2,
+	
 	getPixelDistance: (d:number) => number,
+	getDistance: (d:number) => number,
 	time: number
 }
 const CanvasContext = createContext<CanvasState>({
 	getPixel: (v:Vector2) => {return v},
+	getPoint: (v:Vector2) => {return v},
+	
 	getPixelDistance: (d:number) => 0,
+	getDistance: (d:number) => 0,
 	time: 0,
 })
 export const useCanvasState = () => useContext(CanvasContext);
@@ -451,7 +457,7 @@ export default function Canvas(props: CanvasProps) {
 	if( props.className )  cn += " " + props.className;
 	
 	return (
-		<CanvasContext.Provider value={{ getPixel , getPixelDistance , time }}>
+		<CanvasContext.Provider value={{ getPixel , getPoint , getPixelDistance , getDistance , time }}>
 			
 			<div className={cn} ref={ targetRef }
 				onMouseMove={e => onMouseMove(e)}
@@ -510,7 +516,7 @@ export function Line({ p1 , p2 , pixelThickness=1 , className }: {p1:Vector2,p2:
 		/>
 	);
 }
-export function Circle({ center , radius , className }: {center:Vector2, radius:number, className?:string}){
+export function Circle({ center , radius , angle=0 , drawAngleLine=false , className }: {center:Vector2, radius:number, angle?:number , drawAngleLine?:boolean, className?:string}){
 	
 	const { getPixel , getPixelDistance } = useCanvasState();
 	
@@ -522,7 +528,45 @@ export function Circle({ center , radius , className }: {center:Vector2, radius:
 	if( className )  cn += " " + className;
 	
 	return(
-		<circle cx={pixelCenter.x} cy={pixelCenter.y} r={pixelRadius} stroke="transparent" fill="currentColor" className={cn} />
+		<>
+			<circle cx={pixelCenter.x} cy={pixelCenter.y} r={pixelRadius} stroke="transparent" fill="currentColor" className={cn} />
+			{ drawAngleLine && 
+				<Line p1={center} p2={addPolar(center,radius,angle)}/>
+			}
+		</>
+		
+	);
+}
+export function Polygon({ offset , angle , vertices , className }: {offset:Vector2, angle:number , vertices:Vector2[], className?:string}){
+	
+	const { getPixel , getDistance } = useCanvasState();
+	
+	vertices = vertices
+		.map( vertice => rotate(vertice,angle) )
+		.map( vertice => add(vertice,offset));//todo rotate first, then add
+	
+	const pixelVertices = vertices.map( vertice => getPixel(vertice) );
+	
+	const pointsString = pixelVertices.map( pixelVertice => `${pixelVertice.x},${pixelVertice.y}` ).join(" ");
+	//console.log({ pointsString });
+	
+	
+	//console.log({ vertices });
+	let cn = "polygon";
+	if( className )  cn += " " + className;
+	
+		
+	return(
+		<>
+			<polygon points={pointsString} fill="currentColor" stroke="none" className={cn} />
+		
+			{/* { pixelVertices.map( (pixelVertice,i) => {
+				
+				const verticePixelR = 3;
+				return <circle cx={pixelVertice.x} cy={pixelVertice.y} r={verticePixelR} stroke="transparent" fill="currentColor" className="polygon-vertice" key={"polygon-vertice-"+i} />
+			})} */}
+		</>
+		
 	);
 }
 type ArcProps = {
