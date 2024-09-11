@@ -5,6 +5,9 @@ import Canvas from './components/Canvas';
 import AnimationDemo from './demos/AnimationDemo';
 import Box2dCanvasDemo from './demos/Box2dCanvasDemo';
 import PolarDemo from './demos/PolarDemo';
+import Canvas2 from './v2/Canvas2';
+import { CanvasClass } from './v2/CanvasClass';
+import PolarDemo2 from './v2/PolarDemo2';
 
 function App() {
 
@@ -18,7 +21,11 @@ function App() {
 		
 		{/* <AnimationDemo /> */}
 		
-		<Box2dCanvasDemo />
+		{/* <Box2dCanvasDemo /> */}
+		
+		{/* <Canvas2 canvasClass={new CanvasClass({x: 0,y: 0},2)} /> */}
+		
+		<PolarDemo2 />
 		
 	</div>
   )

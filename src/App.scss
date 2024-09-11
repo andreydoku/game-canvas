@@ -11,10 +11,13 @@
 	height: 100%;
 	
 	display: grid;
-	grid-template-columns: 1100px;
-	grid-template-rows: 700px;
+	// grid-template-columns: 1100px;
+	// grid-template-rows: 700px;
+	grid-template-columns: 1fr;
+	grid-template-rows: 1fr;
+	//grid-template-rows: 700px;
 	justify-content: center;
     align-items: center;
 	
-	padding: 40px;
+	padding: 50px;
 }
