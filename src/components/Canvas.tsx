@@ -88,7 +88,7 @@ export default function Canvas(props: CanvasProps) {
 	
 	// ========== coordinate system - pixel to world coords ======================================================
 	
-	const [center, setOffset] = useState<Vector2>( props.center ); 
+	const [center, setCenter] = useState<Vector2>( props.center ); 
 	const [zoom, setZoom] = useState<number>( props.zoom ); 
 	
 	function getPoint( pixelPoint:Vector2 ): Vector2{
@@ -191,6 +191,33 @@ export default function Canvas(props: CanvasProps) {
 		return ( pixelDistance ) / zoom;
 		
 	}
+	
+	function zoomInAroundPoint( amount:number , point:Vector2 ): void {
+		
+		const pixel = getPixel( point );
+		
+		setZoom( zoom*amount );
+		movePointToPixel( point , pixel );
+		
+	}
+	function zoomOutAroundPoint( amount:number , point:Vector2 ): void {
+		
+		const pixel = getPixel( point );
+		
+		setZoom( zoom/amount );
+		movePointToPixel( point , pixel );
+		
+	}
+	
+	function movePointToPixel( point:Vector2 , pixel:Vector2 ): void {
+		
+		const centerX = point.x - ( pixel.x - getPixelCenterX() ) / zoom;
+		const centerY = point.y + ( pixel.y - getPixelCenterY() ) / zoom;
+		
+		setCenter({ x:centerX , y:centerY });
+		
+	}
+	
 	
 	function Gridlines(){
 		
@@ -328,7 +355,7 @@ export default function Canvas(props: CanvasProps) {
 	
 	// ========== inputs - mouse and keyboard ======================================================
 	const [mousePosition, setMousePosition] = useState<Vector2|null>( null );
-	
+	const [dragStart, setDragStart] = useState<Vector2|null>( null );
 
 	
 	function onMouseMove( e:any ) { 
@@ -361,11 +388,6 @@ export default function Canvas(props: CanvasProps) {
 		const mousePixel = { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
 		const mousePoint = getPoint( mousePixel );
 		
-		// console.log( "onWheel: "
-		// 	+ "\n\t" + "scrolled " + (scrolledUp?"up":"down")
-		// 	+ "\n\t" + "pixel: " + mousePixel.x + " , " + mousePixel.y 
-		// 	+ "\n\t" + "point: " + mousePoint.x + " , " + mousePoint.y 
-		// );
 		
 		if( scrolledUp ){
 			
@@ -384,6 +406,24 @@ export default function Canvas(props: CanvasProps) {
 		
 		if( props.onMouseDown )
 			props.onMouseDown( mousePoint );
+	}
+	function onDragStart( e:any ){
+		const mousePixel = { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
+		const mousePoint = getPoint( mousePixel );
+		
+		setDragStart( mousePoint );
+	}
+	function onDragOver( e:any ){
+		const mousePixel = { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
+		const mousePoint = getPoint( mousePixel );
+		
+		//setDragOver( mousePoint );
+	}
+	function onDragEnd( e:any ){
+		const mousePixel = { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
+		const mousePoint = getPoint( mousePixel );
+		
+		setDragStart( null );
 	}
 	
 	function MouseCoordinates(){
@@ -477,6 +517,9 @@ export default function Canvas(props: CanvasProps) {
 				// onMouseEnter={ e => onMouseEnter(e) }
 				onMouseLeave={ e => onMouseLeave(e) }
 				onWheel={e => onWheel(e)}
+				onDragStart={ e => onDragStart(e)}
+				onDragOver={ e => onDragOver(e)}
+				onDragEnd={ e => onDragEnd(e)}
 				>
 					
 				<svg viewBox={`0 0 ${pixelDimensions.width} ${pixelDimensions.height}`} >

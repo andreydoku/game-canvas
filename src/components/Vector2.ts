@@ -1,24 +1,4 @@
-// export class Vector2 {
-// 	x: number;
-// 	y: number;
 
-// 	constructor(x:number, y:number) {
-// 		this.x = x;
-// 		this.y = y;
-// 	}
-	
-// 	length(){
-// 		return Math.sqrt( this.x*this.x + this.y*this.y );
-// 	}
-	
-// 	plus( v:Vector2 ){
-// 		return new Vector2( this.x + v.x , this.y + v.y );
-// 	}
-// 	minus( v:Vector2 ){
-// 		return new Vector2( this.x - v.x , this.y - v.y );
-// 	}
-
-// }
 
 export type Vector2 = {
 	x: number;
