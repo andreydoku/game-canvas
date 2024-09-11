@@ -1,14 +1,15 @@
 import { b2Body, b2BodyDef, b2BodyType, b2CircleShape, b2Fixture, b2FixtureDef, b2PolygonShape, b2Shape, b2ShapeType, b2StepConfig, b2Vec2, b2World } from "@box2d/core";
 import Canvas, { Arc, Circle, Line, Polygon, Text , useCanvasState } from "../components/Canvas";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { add, toRadians, Vector2 } from "./Vector2";
 
 import "./Box2dCanvas.scss";
 
-export default function Box2dCanvas({ world , className }: { world:b2World , className?:string }) {
+export default function Box2dCanvas({ world , onMouseDown , className }: { world:b2World , onMouseDown:(p:Vector2)=>void, className?:string }) {
 
 	
 	// const [w, setW] = useState(world);
+	const [_, forceUpdate] = useReducer(x => x + 1, 0);
 	
 	const stepConfig: b2StepConfig = {
 		velocityIterations: 6,
@@ -17,18 +18,10 @@ export default function Box2dCanvas({ world , className }: { world:b2World , cla
 	function update(deltaT: number) {
 
 		world.Step(deltaT, stepConfig);
-		
-		
-		
-		
-		//console.log({ bodies: getAllBodies( world ) });
-		
+		forceUpdate();
 
 	}
-	// useEffect(() => {
-	// 	setW( world );
 
-	// }, [world])
 	
 	
 	
@@ -38,7 +31,7 @@ export default function Box2dCanvas({ world , className }: { world:b2World , cla
 	
 	
 	return (
-		<Canvas zoom={70} center={{ x: 0, y: 3 }} update={update} className={cn} >
+		<Canvas zoom={70} center={{ x: 0, y: 3 }} update={update} onMouseDown={onMouseDown} className={cn} >
 
 			{ getAllBodies(world).map( (body,i) => 
 				<B2Body body={body} key={"body-"+i}/>
@@ -47,27 +40,28 @@ export default function Box2dCanvas({ world , className }: { world:b2World , cla
 		</Canvas>
 	)
 	
-	function B2Body({ body }: {body:b2Body }){
+	function B2Body({ body }: { body:b2Body }){
 		
-		const transform = body.GetTransform();
 		const bodyPosition:Vector2 = body.GetPosition() as Vector2;
-		//const angle:number = transform.GetAngle();
-		
-		const angle:number = body.GetAngle();
-		console.log({ bodyPosition });
-		
-		
-		//console.log({ position: bodyPosition , angle });
+		const bodyAngle:number = body.GetAngle();
 		
 		const fixtures:b2Fixture[] = getAllFixtures( body );
 		const shapes:b2Shape[] = fixtures.map( fixture => fixture.GetShape() );
 		
+		const bodyType:b2BodyType = body.GetType();
+		
+		let cn = "body";
+		if( bodyType == b2BodyType.b2_dynamicBody )    cn += " dynamic";
+		if( bodyType == b2BodyType.b2_kinematicBody )  cn += " kinematic";
+		if( bodyType == b2BodyType.b2_staticBody )     cn += " static";
+		
+		
 		return(
-			<>
+			<g className={cn}>
 				{ shapes.map( (shape,i) => 
-					<B2Shape shape={shape} offset={bodyPosition} angle={angle} key={i}/>
+					<B2Shape shape={shape} offset={bodyPosition} angle={bodyAngle} key={i}/>
 				)}
-			</>
+			</g>
 		)
 		
 	}
@@ -104,8 +98,6 @@ export default function Box2dCanvas({ world , className }: { world:b2World , cla
 		
 		const shapeType:b2ShapeType = shape.GetType();
 		
-		//console.log({ shapeType });
-		
 		if( shapeType == b2ShapeType.e_circle ){
 			
 			const circleShape:b2CircleShape = shape as b2CircleShape;
@@ -127,8 +119,6 @@ export default function Box2dCanvas({ world , className }: { world:b2World , cla
 	function B2CircleShape({ circleShape , offset , angle }: { circleShape:b2CircleShape , offset:Vector2 , angle:number }){
 		
 		const radius = circleShape.m_radius;
-		console.log("angle: " + angle);
-		
 			
 		return <Circle center={offset} radius={radius} angle={angle} drawAngleLine/>
 		
@@ -137,10 +127,6 @@ export default function Box2dCanvas({ world , className }: { world:b2World , cla
 	function B2PolygonShape({ polygonShape , offset , angle }: {polygonShape:b2PolygonShape , offset:Vector2 , angle:number}){
 		
 		let vertices:Vector2[] = polygonShape.m_vertices;
-		
-		//vertices = vertices.map( vertice => add(vertice,offset));
-		
-		//console.log({ vertices });
 		
 		
 		return(

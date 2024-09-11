@@ -29,6 +29,7 @@ type CanvasProps = {
 	center: Vector2
 	children?: React.ReactNode
 	mouseMoved?: (v:Vector2)=>void
+	onMouseDown?: (v:Vector2)=>void
 	update?: (deltaT:number)=>void
 }
 export default function Canvas(props: CanvasProps) {
@@ -328,6 +329,8 @@ export default function Canvas(props: CanvasProps) {
 	// ========== inputs - mouse and keyboard ======================================================
 	const [mousePosition, setMousePosition] = useState<Vector2|null>( null );
 	
+
+	
 	function onMouseMove( e:any ) { 
 		
 		const mousePixel = { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
@@ -374,6 +377,13 @@ export default function Canvas(props: CanvasProps) {
 			zoomOutAroundPoint( 1.25 , mousePoint );
 		}
 		
+	}
+	function onMouseDown( e:any ){
+		const mousePixel = { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
+		const mousePoint = getPoint( mousePixel );
+		
+		if( props.onMouseDown )
+			props.onMouseDown( mousePoint );
 	}
 	
 	function MouseCoordinates(){
@@ -461,7 +471,7 @@ export default function Canvas(props: CanvasProps) {
 			
 			<div className={cn} ref={ targetRef }
 				onMouseMove={e => onMouseMove(e)}
-				// onMouseDown={e => onMouseDown(e)}
+				onMouseDown={e => onMouseDown(e)}
 				// onMouseUp={e => onMouseUp(e)}
 				// onWheel={e => onWheel(e)}
 				// onMouseEnter={ e => onMouseEnter(e) }
@@ -523,6 +533,8 @@ export function Circle({ center , radius , angle=0 , drawAngleLine=false , class
 	const pixelCenter = getPixel( center );
 	const pixelRadius = getPixelDistance( radius );
 	
+	//console.log("Circle angle: " + angle);
+	
 	
 	let cn = "circle";
 	if( className )  cn += " " + className;
@@ -538,6 +550,8 @@ export function Circle({ center , radius , angle=0 , drawAngleLine=false , class
 	);
 }
 export function Polygon({ offset , angle , vertices , className }: {offset:Vector2, angle:number , vertices:Vector2[], className?:string}){
+	
+	//console.log("Polygon angle: " + angle);
 	
 	const { getPixel , getDistance } = useCanvasState();
 	
