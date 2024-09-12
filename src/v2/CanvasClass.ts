@@ -27,6 +27,7 @@ export class CanvasClass{
 		this.zoom = zoom;
 		//console.log("called constructor");
 		
+		
 	}
 	
 	getPoint( pixel:Vector2 ): Vector2{
@@ -160,7 +161,8 @@ export class CanvasClass{
 		const mousePixel = { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
 		const mousePoint = this.getPoint( mousePixel );
 		
-		console.log("mouse down: " + mousePoint.x + " , " + mousePoint.y);
+		//console.log("mouse down: " + mousePoint.x + " , " + mousePoint.y);
+		this.mousePressed( mousePoint );
 		
 		
 		this.mousePressedPosition = mousePoint;
@@ -172,8 +174,6 @@ export class CanvasClass{
 		this.mousePressedPosition = null;
 	}
 	
-	
-	
 	//callbacks
 	mouseMoved( p: Vector2|null ){}
 	mouseDragged( dragStart:Vector2 , dragPosition:Vector2 ){
@@ -183,4 +183,33 @@ export class CanvasClass{
 		this.movePointToPixel( dragStart , dragPixel );
 		
 	}
+	mousePressed( p: Vector2|null ){}
+	
+	
+	//=========================================================
+	
+	time: number = 0;
+	oldTimestamp: number = 0;
+	tick(){
+		//console.log("tick");
+		const newTimestamp = Date.now();
+		
+		const deltaT = (newTimestamp - this.oldTimestamp) / 1000;
+		this.time += deltaT;
+		this.oldTimestamp = newTimestamp;
+		
+		
+		this.update( deltaT );
+		this.repaint();
+	}
+	start(){
+		this.time = 0;
+		this.oldTimestamp = Date.now();
+		setInterval( this.tick.bind(this) , 1000/60 );
+	}
+	update( deltaT:number ){
+		
+	}
+	
+	
 }

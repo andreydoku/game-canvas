@@ -1,0 +1,56 @@
+.box2d-canvas-2{
+	
+	--slate-50	: rgb(248 250 252);
+	--slate-100	: rgb(241 245 249);
+	--slate-200	: rgb(226 232 240);
+	--slate-300	: rgb(203 213 225);
+	--slate-400	: rgb(148 163 184);
+	--slate-500	: rgb(100 116 139);
+	--slate-600	: rgb(71 85 105);
+	--slate-700	: rgb(51 65 85);
+	--slate-800	: rgb(30 41 59);
+	--slate-900	: rgb(15 23 42);
+	--slate-950	: rgb(2 6 23);
+
+	--blue-50	: rgb(239 246 255);
+	--blue-100	: rgb(219 234 254);
+	--blue-200	: rgb(191 219 254);
+	--blue-300	: rgb(147 197 253);
+	--blue-400	: rgb(96 165 250);
+	--blue-500	: rgb(59 130 246);
+	--blue-600	: rgb(37 99 235);
+	--blue-700	: rgb(29 78 216);
+	--blue-800	: rgb(30 64 175);
+	--blue-900	: rgb(30 58 138);
+	--blue-950	: rgb(23 37 84);
+	
+	.dynamic{
+		.circle{
+			fill: var(--blue-500);
+			stroke: var(--blue-100);
+			stroke-width: 2px;
+		}
+		
+		.polygon{
+			fill: var(--blue-500);
+			stroke: var(--blue-100);
+			stroke-width: 2px;
+		}
+	}
+	.static{
+		.circle{
+			fill: var(--slate-500);
+			stroke: var(--slate-100);
+			stroke-width: 2px;
+		}
+		
+		.polygon{
+			fill: var(--slate-500);
+			stroke: var(--slate-100);
+			stroke-width: 2px;
+		}
+	}
+	
+	
+	
+}

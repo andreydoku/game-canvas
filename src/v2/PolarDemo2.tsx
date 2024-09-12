@@ -3,7 +3,7 @@ import { useState } from "react";
 import { getXComponent, getYComponent, Vector2 , length, mul, angle, PI_OVER_2, fromPolar, negate, add, ORIGIN, midpoint, toDegreesString, degreesString } from "../components/Vector2";
 
 import "./PolarDemo2.scss";
-import Canvas2, { Line, Text, Arc } from "./Canvas2";
+import Canvas2, { Line, Text, Arc, Circle } from "./Canvas2";
 
 export default function PolarDemo2() {
 	
@@ -128,6 +128,8 @@ export default function PolarDemo2() {
 				</>
 				
 			}
+			
+			{/* <Circle center={{x:0,y:0}} radius={50} /> */}
 			
 		</Canvas2>
 

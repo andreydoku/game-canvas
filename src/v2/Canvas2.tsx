@@ -14,13 +14,15 @@ type Canvas2Props = {
 	center?: Vector2
 	zoom?: number 
 	mouseMoved?: (v:Vector2) => void
+	mousePressed?: (v:Vector2) => void
+	update?: (dt:number) => void
 	className?: string
 	children?: React.ReactNode
 	// mouseMoved?: (v:Vector2)=>void
 	// onMouseDown?: (v:Vector2)=>void
 	// update?: (deltaT:number)=>void
 }
-export default function Canvas2({ center=ORIGIN , zoom=1 , mouseMoved=(v)=>{} , className , children }: Canvas2Props) {
+export default function Canvas2({ center=ORIGIN , zoom=1 , mouseMoved=(v)=>{} , mousePressed=(v)=>{} , update=(dt)=>{} , className , children }: Canvas2Props) {
 	
 	//const [canvasClass, setCanvasClass] = useState( new CanvasClass( center , zoom ) );
 	const [canvasClass, setCanvasClass] = useState<CanvasClass|null>( null );
@@ -94,11 +96,52 @@ export default function Canvas2({ center=ORIGIN , zoom=1 , mouseMoved=(v)=>{} , 
 		canvasClass.pixelDimensions = pd;
 		canvasClass.repaint = () => forceUpdate();
 		canvasClass.mouseMoved = mouseMoved;
+		canvasClass.mousePressed = mousePressed;
+		canvasClass.update = update;
 		
 		setCanvasClass( canvasClass );
+		canvasClass.start();
 		
 		
 	}, [])
+	
+	
+	
+	
+	
+	
+	
+	
+	// const requestRef = useRef();
+	
+	// const animate = time => {
+	// 	if( canvasClass == null ){
+	// 		return
+	// 	}
+		
+	// 	const newTime = time/1000;
+	// 	console.log("animate - tick");
+		
+		
+	// 	canvasClass.tick( newTime );
+		
+	// 	requestRef.current = requestAnimationFrame(animate);
+	// }
+	
+	// useEffect(() => {
+	// 	requestRef.current = requestAnimationFrame(animate);
+	// 	return () => cancelAnimationFrame(requestRef.current);
+	// }, []); // Make sure the effect runs only once
+	
+	// useEffect(() => {
+	// 	if( props.update ){
+	// 		props.update( deltaTime );
+	// 	}
+	// }, [time]); // Make sure the effect runs only once
+	
+	
+	
+	
 	
 	
 	
@@ -140,7 +183,7 @@ export default function Canvas2({ center=ORIGIN , zoom=1 , mouseMoved=(v)=>{} , 
 						{pixelDimensionsText}
 					</text>
 					
-					{/* <Time /> */}
+					<Time />
 					
 					<Gridlines />
 					<MouseCoordinates />
@@ -329,7 +372,7 @@ export function Circle({ center , radius , angle=0 , drawAngleLine=false , class
 	const pixelCenter = canvasClass.getPixel( center );
 	const pixelRadius = canvasClass.getPixelDistance( radius );
 	
-	//console.log("Circle angle: " + angle);
+	console.log("Circle" + " center: " + JSON.stringify(center) + " pixelCenter: " + JSON.stringify(pixelCenter) );
 	
 	
 	let cn = "circle";
@@ -517,7 +560,7 @@ export function Time(){
 	
 	return(
 		<text x="20" y="70" fill="currentColor">
-			{getTimeString(time)}
+			{getTimeString(canvasClass.time)}
 		</text>
 	);
 	
